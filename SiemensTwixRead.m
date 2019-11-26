@@ -319,6 +319,9 @@ elseif strfind(TwixHeader.sequenceFileName,'eja_svs_mpress')
 elseif strfind(TwixHeader.sequenceFileName,'svs_se')
     TwixHeader.seqtype = 'PRESS'; % In case PRESS is used as water reference
     TwixHeader.seqorig = TwixHeader.sequenceString;
+elseif strfind(TwixHeader.sequenceFileName,'uzay_svs_mpress')
+    TwixHeader.seqtype = 'MEGAPRESS'; % WTC: Uzay's sequence - the dims in a FID-A sense are as follows {'t','coils','averages','subSpecs','extras';'Col','Cha','Set','Eco',''}
+    TwixHeader.seqorig = 'UEMIR_WIN';
 else
     TwixHeader.seqorig = TwixHeader.sequenceString;
     error(['Unknown sequence: ' TwixHeader.seqorig '. Please consult the Gannet team for support.'])
@@ -370,6 +373,9 @@ elseif strcmp(TwixHeader.seqtype,'MEGAPRESS')
             else
                 dims.averages=4;
             end
+        elseif strcmp(TwixHeader.seqorig,'UEMIR_WIN')
+            % Averages are 'Set'
+            dims.averages=find(strcmp(TwixHeader.sqzDims,'Set'));
         else
             dims.averages=find(strcmp(TwixHeader.sqzDims,'Ave'));
         end
@@ -386,6 +392,8 @@ elseif strcmp(TwixHeader.seqtype,'MEGAPRESS')
             dims.dyn=find(strcmp(TwixHeader.sqzDims,'Eco'));
         elseif strcmp(TwixHeader.seqorig,'JN')
             dims.dyn=find(strcmp(TwixHeader.sqzDims,'Set'));
+        elseif strcmp(TwixHeader.seqorig,'UEMIR_WIN')
+            dims.dyn=find(strcmp(TwixHeader.sqzDims,'Eco'));
         else
             dims.dyn=find(strcmp(TwixHeader.sqzDims,'Ide'));
         end
@@ -412,6 +420,8 @@ elseif strcmp(TwixHeader.seqtype,'MEGAPRESS')
         TwixHeader.pointsAfterEcho      = twix_obj.image.cutOff(2,1);
     elseif strcmp(TwixHeader.seqorig,'Custom') % Custom
         TwixHeader.pointsBeforeEcho     = twix_obj.image.freeParam(1);
+    elseif strcmp(TwixHeader.seqorig,'UEMIR_WIN')
+        TwixHeader.pointsBeforeEcho     = twix_obj.image.iceParam(5,1); % WTC: I think it is the same as the CMRR sequence - would make sense.
     else
         TwixHeader.pointsBeforeEcho     = twix_obj.image.freeParam(1);
     end

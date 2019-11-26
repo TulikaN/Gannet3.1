@@ -133,22 +133,22 @@ else
     
     switch MRS_struct.p.target{1}
         case {'GABAGlx','Lac','EtOH'}
-            % Water
-            freqLim = freq <= 4.68+0.22 & freq >= 4.68-0.22;
-            [~,i] = max(abs(data(freqLim,:)));
-            freq2 = freq(freqLim);
-            maxFreq = freq2(i);
-            for jj = 1:2
-                freqLim(jj,:) = freq <= maxFreq(jj)+0.22 & freq >= maxFreq(jj)-0.22;
-            end
-%             % Cho
-%             freqLim = freq <= 3.2+0.09 & freq >= 3.2-0.09;
+%             % Water
+%             freqLim = freq <= 4.68+0.22 & freq >= 4.68-0.22;
 %             [~,i] = max(abs(data(freqLim,:)));
 %             freq2 = freq(freqLim);
 %             maxFreq = freq2(i);
 %             for jj = 1:2
-%                 freqLim(jj,:) = freq <= maxFreq(jj)+0.08 & freq >= maxFreq(jj)-0.08;
+%                 freqLim(jj,:) = freq <= maxFreq(jj)+0.22 & freq >= maxFreq(jj)-0.22;
 %             end
+            % Cho
+            freqLim = freq <= 3.2+0.09 & freq >= 3.2-0.09;
+            [~,i] = max(abs(data(freqLim,:)));
+            freq2 = freq(freqLim);
+            maxFreq = freq2(i);
+            for jj = 1:2
+                freqLim(jj,:) = freq <= maxFreq(jj)+0.08 & freq >= maxFreq(jj)-0.08;
+            end
         case 'GSH'
             % NAA
             freqLim = freq <= 2.01+0.13 & freq >= 2.01-0.13;

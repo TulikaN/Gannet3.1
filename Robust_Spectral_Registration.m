@@ -109,6 +109,15 @@ while SpecRegLoop > -1
         tMax = find(time <= 0.1,1,'last');
     end
     
+    % WTC remove data below 2.85 ppm and above 4 ppm from spectral registration
+    ii = MRS_struct.ii;
+    freqRange = MRS_struct.p.sw(ii)/MRS_struct.p.LarmorFreq(ii);
+    freq = (size( MRS_struct.fids.data,1) + 1 - (1:size( MRS_struct.fids.data,1))) / size( MRS_struct.fids.data,1) * freqRange + 4.68 - freqRange/2;
+    ppmIndicies = (freq>2.8) & (freq<4.2);
+    DataToAlignSpec = specFft(DataToAlign);
+    DataToAlignSpec(~ppmIndicies.',:) = 0;
+    DataToAlign = specInvFft(DataToAlignSpec);
+    
     % Flatten complex data for use in spectral registration
     clear flatdata
     flatdata(:,1,:) = real(DataToAlign(1:tMax,SubspecToAlign == SpecRegLoop));
