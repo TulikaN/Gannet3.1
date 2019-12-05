@@ -52,6 +52,7 @@ fprintf('The estimated GABA fit error relative to water is %0.2f%%.\n',MRS_struc
 % Optionally output to cvs by setting the following line befroe calling
 % GannetQuantify. Note that the output directory is the current directory,
 % so you might want to cd somewhere first (see 2nd following commented line)
+% Note the Gasparovic corrected value is ConcIU_TissCorr in the csv file.
 
 MRS_struct.p.csv = true;
 % oldDir = cd('Outputdir'); % Location you want the cvs file output

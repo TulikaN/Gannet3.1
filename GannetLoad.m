@@ -482,6 +482,7 @@ for ii = 1:numscans % Loop over all files in the batch (from metabfile)
             end
             
             MRS_struct.spec.AllFramesFTrealign = AllFramesFTrealign;
+            MRS_struct.spec.AllFramesFT = AllFramesFT; %WTC save this out for GannetChop;
             
             % Separate ON/OFF data and generate DIFF spectra
             
