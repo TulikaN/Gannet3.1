@@ -114,9 +114,9 @@ while SpecRegLoop > -1
     freqRange = MRS_struct.p.sw(ii)/MRS_struct.p.LarmorFreq(ii);
     freq = (size( MRS_struct.fids.data,1) + 1 - (1:size( MRS_struct.fids.data,1))) / size( MRS_struct.fids.data,1) * freqRange + 4.68 - freqRange/2;
     ppmIndicies = (freq>2.8) & (freq<4.2);
-    DataToAlignSpec = specFft(DataToAlign);
+    DataToAlignSpec = specFft_Gannet(DataToAlign);
     DataToAlignSpec(~ppmIndicies.',:) = 0;
-    DataToAlign = specInvFft(DataToAlignSpec);
+    DataToAlign = specInvFft_Gannet(DataToAlignSpec);
     
     % Flatten complex data for use in spectral registration
     clear flatdata
