@@ -32,8 +32,8 @@ end
 
 % Calculate indicies.
 currentAverage = 1;
-numberOfAverages =  MRS_struct.p.Navg;
-blockIndicies = logical([]); % Need the explicet cast otherwise tmp gets cast back to a double on assignment.
+numberOfAverages =  MRS_struct.p.Navg(1);
+blockIndicies = logical([]); % Need the explicit cast otherwise tmp gets cast back to a double on assignment.
 while (currentAverage+blocksize-1) <= numberOfAverages
     tmp = false(numberOfAverages,1);
     tmp(currentAverage:(currentAverage+blocksize-1)) = true;
@@ -45,24 +45,27 @@ numBlocks = size(blockIndicies,2);
 %% Make the new structures
 
 for iDx = 1:numBlocks
-    for ii = 1:MRS_struct.p.numscans % Loop of batched files
+    %for ii = 1:MRS_struct.p.numscans % Loop of batched files. NOT needed
+    %as everything can be done by indexing in line.
         outStructs{iDx} = MRS_struct;
 
         % Go through each field and touch up the values
         % p field
-        outStructs{iDx}.p.nrows = blocksize;
-        outStructs{iDx}.p.Navg = blocksize;
+        outStructs{iDx}.p.nrows = blocksize * ones(size(outStructs{iDx}.p.nrows));
+        outStructs{iDx}.p.Navg = blocksize * ones(size(outStructs{iDx}.p.Navg));
 
         % spec field
-        outStructs{iDx}.spec.F0freq = MRS_struct.spec.F0freq(ii,blockIndicies(:,iDx));
-        outStructs{iDx}.spec.F0freq2 = MRS_struct.spec.F0freq2(ii,blockIndicies(:,iDx));
-        outStructs{iDx}.spec.AllFramesFTrealign = MRS_struct.spec.AllFramesFTrealign(:,blockIndicies(:,iDx));
-
-        % fids field
+        outStructs{iDx}.spec.F0freq = MRS_struct.spec.F0freq(:,blockIndicies(:,iDx));
+        outStructs{iDx}.spec.F0freq2 = MRS_struct.spec.F0freq2(:,blockIndicies(:,iDx));
+        outStructs{iDx}.spec.AllFramesFTrealign = MRS_struct.spec.AllFramesFTrealign(:,blockIndicies(:,iDx),:);
+        outStructs{iDx}.spec.AllFramesFT = MRS_struct.spec.AllFramesFT(:,blockIndicies(:,iDx),:);
+        
+        % fids field - WTC I think the data fields here are used in a 
+        % temporary way and shouldn't be reinterpreted later on (i.e. here)
         outStructs{iDx}.fids.data = MRS_struct.fids.data(:,blockIndicies(:,iDx));
         outStructs{iDx}.fids.ON_OFF = MRS_struct.fids.ON_OFF(blockIndicies(:,iDx));
         outStructs{iDx}.fids.data_align = MRS_struct.fids.data_align(:,blockIndicies(:,iDx));
-    end
+    %end
     
     % fid and spec VoxX fields
     [outStructs{iDx}.spec.vox1.GABAGlx,currReject] = redoAveraging(outStructs{iDx});
@@ -80,9 +83,8 @@ end % End of function
 % require to populate the voxX fields of MRS_struct.spec
 function [out,reject] = redoAveraging(MRS_struct)
 
-AllFramesFTrealign = MRS_struct.spec.AllFramesFTrealign;
-
 for ii = 1:MRS_struct.p.numscans % Loop of batched files
+    AllFramesFTrealign = MRS_struct.spec.AllFramesFTrealign(:,:,ii);
     freqRange = MRS_struct.p.sw(ii)/MRS_struct.p.LarmorFreq(ii);
     if strcmp(MRS_struct.p.AlignTo,'RobustSpecReg') && ~strcmp(MRS_struct.p.vendor,'Siemens_rda') % if .rda data, use conventional averaging
 
@@ -136,7 +138,7 @@ for ii = 1:MRS_struct.p.numscans % Loop of batched files
     out.diff(ii,:) = (out.on(ii,:) - out.off(ii,:))/2;
 
     if isfield(MRS_struct.spec,'AllFramesFT') % Catch case where unmodified version of GannetLoad might have been used.
-        AllFramesFT = MRS_struct.spec.AllFramesFT;
+        AllFramesFT = MRS_struct.spec.AllFramesFT(:,:,ii);
         out.diff_noalign(ii,:) = (mean(AllFramesFT(:,(MRS_struct.fids.ON_OFF==1)),2) - mean(AllFramesFT(:,(MRS_struct.fids.ON_OFF==0)),2))/2;
     else
         warning('AllFramesFT hasn''t been stored, diff_noalign will be the same as diff.')

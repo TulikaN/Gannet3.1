@@ -10,9 +10,9 @@ spm('defaults','fmri')
 spm_jobman('initcfg')
 
 %% Data locations
-mainFile = '/Users/wclarke/Documents/Data/tmp/BI_MEGAPRESS_Comparison/2013_40_525/meas_MID00241_FID57300_mega_press_TR1500_2.dat';
-waterRef = '/Users/wclarke/Documents/Data/tmp/BI_MEGAPRESS_Comparison/2013_40_525/meas_MID00245_FID57304_mega_press_wref3.dat';
-niftiFile = '/Users/wclarke/Documents/Data/tmp/BI_MEGAPRESS_Comparison/2013_40_525/F3T_2013_40_525/images_015_t1mprax1mmisowithNose64ch1001.nii';
+mainFile = 'MPRESSExamples/Sub01/meas_MID01388_FID104333_mega_press_TR1500_LOC_Acq_CORR.dat';
+waterRef = 'MPRESSExamples/Sub01/meas_MID01392_FID104337_mega_press_wref3_LOC.dat';
+niftiFile = 'MPRESSExamples/Sub01/images_003_t1mprax1mmiso64chv21001.nii';
 
 %% Call gannet processing
 % loading and fitting
